@@ -25,7 +25,7 @@ function swt_mri_remove_roles_dropdown( $hook )
 	if ( 'user-edit.php' !== $hook || is_network_admin() ) {
 		return;
 	};
-	wp_enqueue_script( 'swt-mri', plugin_dir_url( __FILE__ ).'js/multi-roles-edit.js', array( 'jquery' ) );
+	wp_enqueue_script( 'swt-mri', plugins_url( 'js/multi-roles-edit.js', dirname(__FILE__) ), array( 'jquery' ) );
 }
 add_action( 'admin_enqueue_scripts', 'swt_mri_remove_roles_dropdown' );
 
