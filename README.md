@@ -9,20 +9,21 @@ Stable tag: 1.0
 Multiple Roles Interface provides a roles checklist to assign multiple roles to a user.
 
 ## Description
-WordPress supports the multiple roles for users but does not have an interface to manage them. Multiple Roles Interface replaces the Roles dropdown menu on the user-edit.php page with a list of checkboxes to assign more than one role to a user.
+WordPress supports multiple roles for users but does not have an interface to manage them. Multiple Roles Interface replaces the Roles dropdown on the user-edit.php page with a list of checkboxes so more than one role may be assigned to a user. Works on multisite.
 
 **Features**
 
 * Works on multisite as well as single installations
+* Clean installation: no options added to the database or settings page to manage
 * Introduces an optional constant to prevent accidental removal of all roles from a user
 * Provides filter hooks for additional customization
-* Clean installation: no options added to the database or settings page to manage
 * Contains language support
 
 ## Installation
 
-1. Upload the multiple-roles-interface folder to your /wp-content/plugins/ directory.
-2. Activate the "Multiple Roles Interface" plugin in your WordPress administration.
+1. Upload the plugin folder to your /wp-content/plugins/ directory.
+2. Make plugin folder is named multiple-roles-interface.
+3. Activate the "Multiple Roles Interface" plugin in your WordPress administration.
 
 ## Frequently Asked Questions
 
