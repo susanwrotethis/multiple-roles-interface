@@ -1,0 +1,45 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Multiple Roles Interface\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-15 19:06+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.0; wp-5.0.3"
+
+#: inc/admin.php:86
+#, php-format
+msgid "If you do not assign a role, the %s role will be added automatically."
+msgstr ""
+
+#. Name of the plugin
+msgid "Multiple Roles Interface"
+msgstr ""
+
+#: inc/admin.php:284
+msgid "None"
+msgstr ""
+
+#: inc/admin.php:75 inc/admin.php:261
+msgid "Roles"
+msgstr ""
+
+#: inc/admin.php:72
+msgid "User Roles"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"WordPress supports multiple roles for users but does not have an interface "
+"to manage them. Multiple Roles Interface replaces the Roles dropdown on the "
+"user-edit.php and user-new.php pages with a list of checkboxes so more than "
+"one role may be assigned to a user. Works on multisite."
+msgstr ""
