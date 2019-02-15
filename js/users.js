@@ -1,0 +1,1 @@
+jQuery(document).ready(function($){$("select#new_role").closest("div").remove()});

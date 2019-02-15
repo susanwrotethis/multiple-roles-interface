@@ -1,0 +1,1 @@
+jQuery(document).ready(function($){$("select#role").closest("tr").remove()});
