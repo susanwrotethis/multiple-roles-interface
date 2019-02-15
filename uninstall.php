@@ -1,5 +1,4 @@
 <?php
+if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) exit;
 
-// Nothing to uninstall
-
-?>
+// Nothing in the database to remove
