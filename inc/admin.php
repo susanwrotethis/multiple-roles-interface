@@ -12,21 +12,22 @@ function swt_mri_remove_roles_dropdown( $hook )
 		return;
 	};
 	
+	$plugin_url = plugins_url( '/', dirname(__FILE__) );
+	
 	// Enqueued separately to facilitate modifications for special use cases
 	if ( 'users.php' == $hook) {
-		wp_enqueue_script( 'swt-mri-users', plugins_url( 'js/users.js', dirname(__FILE__) ), array( 'jquery' ) );
+		wp_enqueue_script( 'swt-mri-users', $plugin_url.'js/users.js', array( 'jquery' ) );
 	}
 	
 	if ( 'user-new.php' == $hook ) {
-		wp_enqueue_script( 'swt-mri-new', plugins_url( 'js/user-new.js', dirname(__FILE__) ), array( 'jquery' ) );
+		wp_enqueue_script( 'swt-mri-new', $plugin_url.'js/user-new.js', array( 'jquery' ) );
 	}
 	
 	if ( 'user-edit.php' == $hook ) {
-		wp_enqueue_script( 'swt-mri-edit', plugins_url( 'js/user-edit.js', dirname(__FILE__) ), array( 'jquery' ) );
+		wp_enqueue_script( 'swt-mri-edit', $plugin_url.'js/user-edit.js', array( 'jquery' ) );
 	}
 }
-add_action( 'admin_enqueue_scripts', 'swt_mri_remove_roles_dropdown' );
-
+add_action( 'admin_enqueue_scripts', 'swt_mri_remove_roles_dropdown', 2 );
 
 // FUNCTIONALITY SETUP FUNCTIONS BEGIN HERE //////////////////////////////////////////////
 // Add custom form field generation actions; ignore network admin on a multisite.
@@ -37,10 +38,9 @@ function swt_mri_add_actions()
 	}
 	add_action( 'edit_user_profile', 'swt_mri_edit_user_roles_field' );
 	add_action( 'profile_update', 'swt_mri_profile_update_roles', 10, 2 );
-	
 	add_action( 'user_new_form', 'swt_mri_new_user_roles_field' );
 	
-	if ( is_multisite() ) {
+	if ( is_multisite() ) { // Different new user hook for single site vs. multisite
 		add_action( 'add_user_to_blog', 'swt_mri_new_user_roles' );
 	} else {
 		add_action( 'user_register', 'swt_mri_new_user_roles' );
@@ -66,27 +66,15 @@ function swt_mri_generate_form_field( $user, $form )
 	// Use filter hook for custom filtering or sorting of roles
 	$roles = get_editable_roles();
 	$roles = apply_filters( 'swt_mri_list_multi_roles', $roles );
-	
-	$failsafe = get_option( 'default_role', 'subscriber' );
 ?>
 <h2><?php esc_html_e( 'User Roles', 'swt-mri' ); ?></h2>
 <table class="form-table">
 	<tr>
 		<th><?php esc_html_e( 'Roles', 'swt-mri' ); ?></th>
 		<td>
-<?php
-			if ( defined( 'SWT_MRI_ADD_FAILSAFE_ROLE' ) && SWT_MRI_ADD_FAILSAFE_ROLE ) {
-				
-				if ( isset( $wp_roles->roles[$failsafe]['name'] ) ) {
-					$rolename = translate_user_role( $wp_roles->roles[$failsafe]['name'] );
-				} else {
-					$rolename = $failsafe; 
-				}
-?>
-			<p><?php printf( esc_html__( 'If you do not assign a role, the %s role will be added automatically.', 'swt-mri' ), $rolename ); ?></p>
-<?php
-			} // End check for defined constant
-?>
+			<?php if ( defined( 'SWT_MRI_ADD_FAILSAFE_ROLE' ) && SWT_MRI_ADD_FAILSAFE_ROLE ) { ?>
+			<p><?php esc_html_e( 'If you do not assign a role, one will be added automatically.', 'swt-mri' ); ?></p>
+			<?php } // End check for defined constant ?>
     		<ul>
 			<?php foreach ( $roles as $role => $attributes ) { ?>
       			<li>	
@@ -139,45 +127,39 @@ function swt_mri_run_security_check( $form, $user_id )
 {
 	global $current_user;
 	
-	// Never on network admin, regardless of form
+	// No user roles assigned on network admin
 	if ( is_network_admin() ) {
+		return false;
+	}
+	
+	// Nonce unset or unverified
+	if ( !isset( $_POST['swt_mri_'.$form.'_roles_nonce'] ) || !wp_verify_nonce( $_POST['swt_mri_'.$form.'_roles_nonce'], 'swt-mri-'.$form.'-roles' ) ) {
 		return false;
 	}
 	
 	// Edit form checks
 	if ( 'edit' == $form ) {
 	
-		switch( true ) {
-			case !isset( $_POST['swt_mri_edit_roles_nonce'] ):
-			case !wp_verify_nonce( $_POST['swt_mri_edit_roles_nonce'], 'swt-mri-edit-roles' ):
-			case !current_user_can( 'edit_user', $user_id ):
-			case $user_id == $current_user->ID:
+		if ( !current_user_can( 'edit_user', $user_id ) || $current_user->ID == $user_id ) {
 				return false;
-		} // End switch
-	}
+		}
+	} // End edit user form
 	
 	// New user form checks
 	else if ( 'new' == $form ) {
 	
-		switch( true ) {
-			case !isset( $_POST['swt_mri_new_roles_nonce'] ):
-			case !wp_verify_nonce( $_POST['swt_mri_new_roles_nonce'], 'swt-mri-new-roles' ):
-			case !current_user_can( 'create_users' ):
+		if ( !current_user_can( 'create_users' ) ) {
 				return false;
-		} // End switch
-	}
+		}
+	} // End new user form
 	
 	// Promote user form checks
 	else if ( 'promote' == $form ) {
 	
-		switch( true ) {
-			case !isset( $_POST['swt_mri_promote_roles_nonce'] ):
-			case !wp_verify_nonce( $_POST['swt_mri_promote_roles_nonce'], 'swt-mri-promote-roles' ):
-			case !current_user_can( 'promote_users' ):
-			case !is_multisite():
+		if ( !current_user_can( 'promote_users' ) || !is_multisite() ) {
 				return false;
-		} // End switch
-	}
+		}
+	} // End promote user form
 	
 	else {
 		return false;
@@ -187,8 +169,19 @@ function swt_mri_run_security_check( $form, $user_id )
 }
 
 // Set the roles
-function swt_mri_set_roles( $user_new_roles, $user_id, $form )
+function swt_mri_set_roles( $user_id, $form )
 {
+	// Run nonce and user permissions checks first
+	if ( !swt_mri_run_security_check( $form, $user_id ) ) {
+		return;
+	}
+	
+	// Get user's new roles from $_POST. An unset value is allowed.
+	$user_new_roles = array();
+	if ( isset( $_POST['swt_mri_'.$form.'_user_roles'] ) ) {
+		$user_new_roles = array_map( 'sanitize_key', $_POST['swt_mri_'.$form.'_user_roles'] );
+	}
+	
 	// Check if roles array is empty and default role feature is enabled; if so, assign default role
 	// Use filter hook to modify default role assigned
 	if ( empty( $user_new_roles ) && defined( 'SWT_MRI_ADD_FAILSAFE_ROLE' ) && SWT_MRI_ADD_FAILSAFE_ROLE ) {
@@ -206,45 +199,25 @@ function swt_mri_set_roles( $user_new_roles, $user_id, $form )
 	}
 }
 
-// Form action: get roles from $_POST on user-edit.php and update roles
+// Form action: update user roles on user-edit.php
 function swt_mri_profile_update_roles( $user_id, $old_user_data )
 {	
-	if ( !swt_mri_run_security_check( 'edit', $user_id ) ) {
+	swt_mri_set_roles( $user_id, 'edit' );
+}
+
+// Form action: add user roles on user-new.php
+function swt_mri_new_user_roles( $user_id )
+{
+	if ( !isset( $_POST['action'] ) ) {
 		return;
 	}
 	
-	// Get user's new roles from $_POST; don't return if empty
-	$user_new_roles = array();
-	if ( isset( $_POST['swt_mri_edit_user_roles'] ) ) {
-		$user_new_roles = array_map( 'sanitize_key', $_POST['swt_mri_edit_user_roles'] );
-	}
-
-	swt_mri_set_roles( $user_new_roles, $user_id, 'edit' );
-}
-
-// Form action: get roles from $_POST on user-new.php and add roles
-function swt_mri_new_user_roles( $user_id )
-{
-	$user_new_roles = array();
-
-	if ( isset( $_POST['swt_mri_new_user_roles'] ) ) {
-	
-		if ( !swt_mri_run_security_check( 'new', $user_id ) ) {
-			return;
-		}
-		
-		$user_new_roles = array_map( 'sanitize_key', $_POST['swt_mri_new_user_roles'] );
-		swt_mri_set_roles( $user_new_roles, $user_id, 'new' );
+	if ( 'createuser' == $_POST['action'] ) {
+		swt_mri_set_roles( $user_id, 'new' );
 	}
 	
-	else if ( isset( $_POST['swt_mri_promote_user_roles'] ) ) {
-	
-		if ( !swt_mri_run_security_check( 'promote', $user_id ) ) {
-			return;
-		}
-		
-		$user_new_roles = array_map( 'sanitize_key', $_POST['swt_mri_promote_user_roles'] );
-		swt_mri_set_roles( $user_new_roles, $user_id, 'promote' );
+	else if ( 'adduser' == $_POST['action'] ) {
+		swt_mri_set_roles( $user_id, 'promote' );
 	}
 }
 
