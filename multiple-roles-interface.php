@@ -4,7 +4,7 @@ Plugin Name: Multiple Roles Interface
 Plugin URI: https://github.com/susanwrotethis/multiple-roles-interface
 GitHub Plugin URI: https://github.com/susanwrotethis/multiple-roles-interface
 Description: WordPress supports multiple roles for users but does not have an interface to manage them. Multiple Roles Interface replaces the Roles dropdown on the user-edit.php and user-new.php pages with a list of checkboxes so more than one role may be assigned to a user. Works on multisite.
-Version: 2.0
+Version: 2.1
 Author: Susan Walker
 Author URI: https://susanwrotethis.com
 License: GPL v2 or later
