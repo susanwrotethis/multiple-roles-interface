@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Multiple Roles Interface\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-15 19:06+0000\n"
+"POT-Creation-Date: 2019-02-19 18:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,25 +15,24 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.2.0; wp-5.0.3"
 
-#: inc/admin.php:86
-#, php-format
-msgid "If you do not assign a role, the %s role will be added automatically."
+#: inc/admin.php:71
+msgid "User Roles"
+msgstr ""
+
+#: inc/admin.php:74 inc/admin.php:235
+msgid "Roles"
+msgstr ""
+
+#: inc/admin.php:77
+msgid "If you do not assign a role, one will be added automatically."
+msgstr ""
+
+#: inc/admin.php:258
+msgid "None"
 msgstr ""
 
 #. Name of the plugin
 msgid "Multiple Roles Interface"
-msgstr ""
-
-#: inc/admin.php:284
-msgid "None"
-msgstr ""
-
-#: inc/admin.php:75 inc/admin.php:261
-msgid "Roles"
-msgstr ""
-
-#: inc/admin.php:72
-msgid "User Roles"
 msgstr ""
 
 #. Description of the plugin
